@@ -13,11 +13,13 @@ class HTTPClient {
 
 class RemoteFeedLoaderTests: XCTestCase {
 
-    func test_init() {
+    func test_initDoesNotRequestURL() {
         let client = HTTPClient()
         _ = RemoteFeedLoader()
         
         XCTAssertNil(client.requestedURL)
     }
+    
+    
 
 }
