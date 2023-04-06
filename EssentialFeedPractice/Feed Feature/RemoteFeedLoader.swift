@@ -9,6 +9,6 @@ import Foundation
 
 class RemoteFeedLoader {
     func load() {
-        HTTPClient.shared.requestedURL = URL(string: "https://some-url.com")
+        HTTPClient.shared.get(from: URL(string: "https://some-url.com")!)
     }
 }

@@ -10,7 +10,8 @@ import XCTest
 class RemoteFeedLoaderTests: XCTestCase {
 
     func test_initDoesNotRequestURL() {
-        let client = HTTPClient.shared
+        let client = HTTPClientMock()
+        HTTPClient.shared = client  // To make up for the moving of requestedURL to mock class
         _ = RemoteFeedLoader()
         
         XCTAssertNil(client.requestedURL)
@@ -18,7 +19,8 @@ class RemoteFeedLoaderTests: XCTestCase {
     
     func test_loaddataFromRequestURL() {
         // Testing the load feed command from API
-        let client = HTTPClient.shared
+        let client = HTTPClientMock()
+        HTTPClient.shared = client
         let sut = RemoteFeedLoader()
         
         sut.load()

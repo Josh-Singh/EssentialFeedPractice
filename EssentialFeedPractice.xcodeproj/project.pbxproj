@@ -24,6 +24,7 @@
 		9647C9FE29DF45B500637D19 /* RemoteFeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9647C9FC29DF45B500637D19 /* RemoteFeedLoader.swift */; };
 		96E4139A29DF5193008A499C /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4139929DF5193008A499C /* HTTPClient.swift */; };
 		96E4139B29DF5193008A499C /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4139929DF5193008A499C /* HTTPClient.swift */; };
+		96E4139E29DF5625008A499C /* HTTPClientMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E4139D29DF5625008A499C /* HTTPClientMock.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		9647C9FA29DF456000637D19 /* RemoteFeedLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoaderTests.swift; sourceTree = "<group>"; };
 		9647C9FC29DF45B500637D19 /* RemoteFeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteFeedLoader.swift; sourceTree = "<group>"; };
 		96E4139929DF5193008A499C /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		96E4139D29DF5625008A499C /* HTTPClientMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClientMock.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 		9647C9D929DF42A900637D19 /* EssentialFeedPracticeTests */ = {
 			isa = PBXGroup;
 			children = (
+				96E4139C29DF5611008A499C /* Mocks */,
 				9647C9DA29DF42A900637D19 /* EssentialFeedPracticeTests.swift */,
 				9647C9DC29DF42A900637D19 /* Info.plist */,
 				9647C9FA29DF456000637D19 /* RemoteFeedLoaderTests.swift */,
@@ -153,6 +156,14 @@
 				96E4139929DF5193008A499C /* HTTPClient.swift */,
 			);
 			path = "Feed Feature";
+			sourceTree = "<group>";
+		};
+		96E4139C29DF5611008A499C /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				96E4139D29DF5625008A499C /* HTTPClientMock.swift */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -304,6 +315,7 @@
 				96E4139B29DF5193008A499C /* HTTPClient.swift in Sources */,
 				9647C9F629DF445B00637D19 /* FeedItem.swift in Sources */,
 				9647C9FE29DF45B500637D19 /* RemoteFeedLoader.swift in Sources */,
+				96E4139E29DF5625008A499C /* HTTPClientMock.swift in Sources */,
 				9647C9DB29DF42A900637D19 /* EssentialFeedPracticeTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

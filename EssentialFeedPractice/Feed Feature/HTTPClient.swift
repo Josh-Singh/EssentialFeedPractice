@@ -8,10 +8,7 @@
 import Foundation
 
 class HTTPClient {
-    static let shared = HTTPClient()
-    var requestedURL: URL?
+    static var shared = HTTPClient()    // Global mutable state instead of singleton now bcuz let changed to var
     
-    private init() {
-        
-    }
+    func get(from url: URL) {}
 }
