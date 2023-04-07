@@ -14,7 +14,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientMock()
         let _  = RemoteFeedLoader(client: client, url: url)
         
-        XCTAssertNil(client.requestedURL)
+        XCTAssertTrue(client.requestedURLs.isEmpty)
     }
     
     func test_loaddataFromRequestURL() {
@@ -25,8 +25,8 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         sut.load()
         
-        XCTAssertNotNil(client.requestedURL)
-        XCTAssertEqual(client.requestedURL, url)
+        XCTAssertNotNil(client.requestedURLs)
+        XCTAssertEqual(client.requestedURLs, [url])
     }
 
     func test_loaddataFromRequestURL_Twice() {
