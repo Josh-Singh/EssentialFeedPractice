@@ -44,11 +44,14 @@ class RemoteFeedLoaderTests: XCTestCase {
     func test_loadErrorConnectivity() {
         let url = URL(string: "https://some-new-url.com")!
         let client = HTTPClientMock()
-        client.error = NSError(domain: "Test", code: 0)
+        let clientError = NSError(domain: "Test", code: 0)
         let sut = RemoteFeedLoader(client: client, url: url)
+//        client.completions[0](clientError)
+        
         
         var capturedError: [RemoteFeedLoader.Error] = []
         sut.load { capturedError.append($0) }               /// Same as `{ error in capturedError.append(error)}`
+        client.complete(with: clientError)
         XCTAssertEqual(capturedError, [.connectivity])
     }
 }

@@ -9,11 +9,14 @@ import Foundation
 
 class HTTPClientMock: HTTPClient {
     var requestedURLs = [URL]()     // Added to test how many times the URL is called
-    var error: Error?
+    var completions: [(Error) -> ()] = []
+    
     func get(from url: URL, completion: @escaping (Error) -> ()) {
-        if let error = error {
-            completion(error)
-        }
+        completions.append(completion)
         requestedURLs.append(url)
+    }
+    
+    func complete(with error: Error, at index: Int = 0) {
+        completions[index](error)
     }
 }
