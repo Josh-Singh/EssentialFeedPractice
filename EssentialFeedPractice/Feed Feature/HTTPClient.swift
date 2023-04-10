@@ -7,6 +7,8 @@
 
 import Foundation
 
+public typealias HTTPClientResult = Result<HTTPURLResponse, Error>
+
 public protocol HTTPClient {
-    func get(from url: URL, completion: @escaping (Error?, HTTPURLResponse?) -> ())
+    func get(from url: URL, completion: @escaping (HTTPClientResult) -> ())
 }

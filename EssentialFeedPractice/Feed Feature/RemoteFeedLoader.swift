@@ -22,10 +22,11 @@ public final class RemoteFeedLoader {
     
     public func load(completion: @escaping (Error) -> ()) {
         // Default closure to make sure tests that don't test error case don't break
-        client.get(from: url) { [weak self] (error, response) in
-            if response != nil {
+        client.get(from: url) { [weak self] result in
+            switch result {
+            case .success(_):
                 completion(.invalidCode)
-            } else {
+            case .failure(_):
                 completion(.connectivity)
             }
         }
