@@ -12,6 +12,7 @@ public final class RemoteFeedLoader {
     private let url: URL
     public enum Error: Swift.Error {
         case connectivity
+        case invalidCode
     }
     
     public init(client: HTTPClient, url: URL) {
@@ -21,8 +22,12 @@ public final class RemoteFeedLoader {
     
     public func load(completion: @escaping (Error) -> ()) {
         // Default closure to make sure tests that don't test error case don't break
-        client.get(from: url) { [weak self] error in
-            completion(.connectivity)
+        client.get(from: url) { [weak self] (error, response) in
+            if response != nil {
+                completion(.invalidCode)
+            } else {
+                completion(.connectivity)
+            }
         }
     }
 }

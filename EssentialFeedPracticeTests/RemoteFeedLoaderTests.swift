@@ -54,4 +54,15 @@ class RemoteFeedLoaderTests: XCTestCase {
         client.complete(with: clientError)
         XCTAssertEqual(capturedError, [.connectivity])
     }
+    
+    func test_loadErrorOnNon200HTTPResponse() {
+        let url = URL(string: "https://some-new-url.com")!
+        let client = HTTPClientMock()
+        var capturedErrors: [RemoteFeedLoader.Error] = []
+        
+        let sut = RemoteFeedLoader(client: client, url: url)
+        sut.load { capturedErrors.append($0) }
+        client.complete(withStatusCode: 400)
+        XCTAssertEqual(capturedErrors, [.invalidCode])
+    }
 }
