@@ -19,7 +19,7 @@ public final class RemoteFeedLoader {
         self.url = url
     }
     
-    public func load(completion: @escaping (Error) -> () = { _ in }) {
+    public func load(completion: @escaping (Error) -> ()) {
         // Default closure to make sure tests that don't test error case don't break
         client.get(from: url) { [weak self] error in
             completion(.connectivity)
