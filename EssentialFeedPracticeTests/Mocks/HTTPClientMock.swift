@@ -8,15 +8,16 @@
 import Foundation
 
 class HTTPClientMock: HTTPClient {
-    var requestedURLs = [URL]()     // Added to test how many times the URL is called
-    var completions: [(Error) -> ()] = []
+    private var messages: [(url: URL, completion: (Error) -> ())] = []
+    var requestedURLs: [URL] {
+        messages.map { $0.url }
+    }     // Added to test how many times the URL is called
     
     func get(from url: URL, completion: @escaping (Error) -> ()) {
-        completions.append(completion)
-        requestedURLs.append(url)
+        messages.append((url: url, completion: completion))
     }
     
     func complete(with error: Error, at index: Int = 0) {
-        completions[index](error)
+        messages[index].completion(error)
     }
 }

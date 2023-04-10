@@ -46,7 +46,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientMock()
         let clientError = NSError(domain: "Test", code: 0)
         let sut = RemoteFeedLoader(client: client, url: url)
-//        client.completions[0](clientError)
+//        client.completions[0](clientError)    // !!! Don't call this here we get access array crash! Call after sut.load
         
         
         var capturedError: [RemoteFeedLoader.Error] = []
