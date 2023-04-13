@@ -25,7 +25,8 @@ public final class RemoteFeedLoader {
         client.get(from: url) { [weak self] result in
             switch result {
             case .success(_):
-                completion(.invalidCode)
+                break
+//                completion(.invalidCode)    // Commenting this out and adding `break` here simulates the 200 response with invalid json case
             case .failure(_):
                 completion(.connectivity)
             }
