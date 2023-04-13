@@ -46,13 +46,10 @@ class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientMock()
         let clientError = NSError(domain: "Test", code: 0)
         let sut = RemoteFeedLoader(client: client, url: url)
-//        client.completions[0](clientError)    // !!! Don't call this here we get access array crash! Call after sut.load
         
-        
-        var capturedError: [RemoteFeedLoader.Error] = []
-        sut.load { capturedError.append($0) }               /// Same as `{ error in capturedError.append(error)}`
-        client.complete(with: clientError)
-        XCTAssertEqual(capturedError, [.connectivity])
+        expect(sut: sut, toCompleteWithError: .connectivity) {
+            client.complete(with: clientError)
+        }
     }
     
     func test_loadErrorOnNon200HTTPResponse() {
@@ -62,10 +59,9 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         let invalidCodes = [199, 201, 300, 400, 404, 500]
         invalidCodes.enumerated().forEach { index, code in
-            var capturedErrors: [RemoteFeedLoader.Error] = []
-            sut.load { capturedErrors.append($0) }
-            client.complete(withStatusCode: code, at: index)
-            XCTAssertEqual(capturedErrors, [.invalidCode])
+            expect(sut: sut, toCompleteWithError: .invalidCode) {
+                client.complete(withStatusCode: code, at: index)
+            }
         }
     }
     
@@ -73,14 +69,27 @@ class RemoteFeedLoaderTests: XCTestCase {
         let url = URL(string: "https://some-new-url.com")!
         let client = HTTPClientMock()
         let sut = RemoteFeedLoader(client: client, url: url)
+        
+        expect(sut: sut, toCompleteWithError: .invalidCode) {
+            // Below is the action we are testing passed as closure of the expect function
+            let invalidJSON = Data(bytes: "invalid json".utf8)
+            client.complete(withStatusCode: 200, data: invalidJSON)
+        }
+    }
+    
+    // MARK:- Helpers
+    private func expect(sut: RemoteFeedLoader,
+                        toCompleteWithError error: RemoteFeedLoader.Error,
+                        whenExecuting action: () -> (),
+                        file: StaticString = #file,
+                        line: UInt = #line ) {
+        
+        /// `file` and `line` are added in the function signature here to make sure that when a failing test occurs the fail message doesn't show up on the `XCTAssertEqual` of the `expect` method but rather in the test itself
+        
         var capturedErrors: [RemoteFeedLoader.Error] = []
-        
-        let invalidJSON = Data(bytes: "invalid json".utf8)
-        
         sut.load { capturedErrors.append($0) }
         
-        client.complete(withStatusCode: 200, data: invalidJSON)
-        
-        XCTAssertEqual(capturedErrors, [.invalidCode])
+        action()
+        XCTAssertEqual(capturedErrors, [error], file: file, line: line)
     }
 }
