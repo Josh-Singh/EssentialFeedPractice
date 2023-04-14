@@ -90,24 +90,16 @@ class RemoteFeedLoaderTests: XCTestCase {
     
     func test_loadListOfItemsOn200Responsee() {
         // aka Happiest path
-        let item1 = FeedItem(id: UUID(), description: nil, location: nil, imageURL: URL(string: "a-imageURL.com")!)
+        let item1 = makeItem(id: UUID(), description: nil, location: nil, imageURL: URL(string: "a-imageURL.com")!)
         
         // JSON representation of data received
         // description and location not added since it is coming back as nil in our representation which is not represented in the JSON
-        let item1JSON = [
-            "id": item1.id.uuidString,
-            "image": item1.imageURL.absoluteString
-        ]
+        let item1JSON = item1.json
         
-        let item2 = FeedItem(id: UUID(), description: "description for item 2", location: "location for item 2", imageURL: URL(string: "a-imageURL.com")!)
-        let item2JSON = [
-            "id": item2.id.uuidString,
-            "description": item2.description,
-            "location": item2.location,
-            "image": item2.imageURL.absoluteString
-        ]
+        let item2 = makeItem(id: UUID(), description: "description for item 2", location: "location for item 2", imageURL: URL(string: "a-imageURL.com")!)
+        let item2JSON = item2.json
         
-        let itemsJSON = [ "items": [item1JSON, item2JSON] ]   // In our JSON contract we get the response as follows
+        // In our JSON contract we get the response as follows
         /**
          200 Response
                 "items": [
@@ -123,9 +115,9 @@ class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientMock()
         let sut = RemoteFeedLoader(client: client, url: url)
         
-        expect(sut: sut, toCompleteWithResult: .success([item1, item2])) {
-            let jsonData = try? JSONSerialization.data(withJSONObject: itemsJSON)
-            client.complete(withStatusCode: 200, data: jsonData!)
+        expect(sut: sut, toCompleteWithResult: .success([item1.object, item2.object])) {
+            let jsonData = makeItemsJson(items: [item1JSON, item2JSON])
+            client.complete(withStatusCode: 200, data: jsonData)
         }
     }
     
@@ -143,5 +135,26 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         action()
         XCTAssertEqual(capturedResults, [result], file: file, line: line)
+    }
+    
+    private func makeItem(id: UUID,
+                          description: String?,
+                          location: String?,
+                          imageURL: URL
+    ) -> (object: FeedItem, json: [String: Any]) {
+        let feedItem = FeedItem(id: id, description: description, location: location, imageURL: imageURL)
+        let jsonRepresentationOfFeedItem = [
+            "id": id.uuidString,
+            "description": description,
+            "location": location,
+            "image": imageURL.absoluteString
+        ]   // TODO: Use compactMap or something to eliminate description and location values that are nil
+        
+        return (feedItem, jsonRepresentationOfFeedItem)
+    }
+    
+    private func makeItemsJson(items: [[String: Any]]) -> Data {
+        let items = ["items": items]
+        return try! JSONSerialization.data(withJSONObject: items)
     }
 }
