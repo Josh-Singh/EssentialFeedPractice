@@ -77,6 +77,14 @@ class RemoteFeedLoaderTests: XCTestCase {
         }
     }
     
+    func test_loadEmptyListOfItemsOn200response() {
+        let url = URL(string: "https://some-new-url.com")!
+        let client = HTTPClientMock()
+        let sut = RemoteFeedLoader(client: client, url: url)
+        
+        
+    }
+    
     // MARK:- Helpers
     private func expect(sut: RemoteFeedLoader,
                         toCompleteWithError error: RemoteFeedLoader.Error,
@@ -86,10 +94,10 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         /// `file` and `line` are added in the function signature here to make sure that when a failing test occurs the fail message doesn't show up on the `XCTAssertEqual` of the `expect` method but rather in the test itself
         
-        var capturedErrors: [RemoteFeedLoader.Error] = []
-        sut.load { capturedErrors.append($0) }
+        var capturedResults: [RemoteFeedLoader.FeedLoaderResult] = []
+        sut.load { capturedResults.append($0) }
         
         action()
-        XCTAssertEqual(capturedErrors, [error], file: file, line: line)
+        XCTAssertEqual(capturedResults, [.failure(error)], file: file, line: line)
     }
 }
