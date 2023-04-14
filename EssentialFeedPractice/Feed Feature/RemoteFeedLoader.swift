@@ -27,8 +27,13 @@ public final class RemoteFeedLoader {
         // Default closure to make sure tests that don't test error case don't break
         client.get(from: url) { [weak self] result in
             switch result {
-            case .success(_):
-                completion(.failure(.invalidCode))    // Commenting this out and adding `break` here simulates the 200 response with invalid json case
+            case .success((let data, _)):
+                // Making sure this is a valid JSON and nothing else with the following if let
+                if let json = try? JSONSerialization.jsonObject(with: data) {
+                    completion(.success([]))
+                } else {
+                    completion(.failure(.invalidCode))    // Commenting this out and adding `break` here simulates the 200 response with invalid json case
+                }
             case .failure(_):
                 completion(.failure(.connectivity))
             }

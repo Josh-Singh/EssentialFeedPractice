@@ -82,7 +82,13 @@ class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientMock()
         let sut = RemoteFeedLoader(client: client, url: url)
         
+        var capturedResults: [RemoteFeedLoader.FeedLoaderResult] = []
+        sut.load { capturedResults.append($0) }
         
+        let emptyListJSON = Data(bytes: "{\"items\": []}".utf8)
+        client.complete(withStatusCode: 200, data: emptyListJSON)
+        
+        XCTAssertEqual(capturedResults, [.success([])])
     }
     
     // MARK:- Helpers
