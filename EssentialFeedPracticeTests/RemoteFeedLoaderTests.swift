@@ -88,6 +88,47 @@ class RemoteFeedLoaderTests: XCTestCase {
         }
     }
     
+    func test_loadListOfItemsOn200Responsee() {
+        // aka Happiest path
+        let item1 = FeedItem(id: UUID(), description: nil, location: nil, imageURL: URL(string: "a-imageURL.com")!)
+        
+        // JSON representation of data received
+        // description and location not added since it is coming back as nil in our representation which is not represented in the JSON
+        let item1JSON = [
+            "id": item1.id.uuidString,
+            "image": item1.imageURL.absoluteString
+        ]
+        
+        let item2 = FeedItem(id: UUID(), description: "description for item 2", location: "location for item 2", imageURL: URL(string: "a-imageURL.com")!)
+        let item2JSON = [
+            "id": item2.id.uuidString,
+            "description": item2.description,
+            "location": item2.location,
+            "image": item2.imageURL.absoluteString
+        ]
+        
+        let itemsJSON = [ "items": [item1JSON, item2JSON] ]   // In our JSON contract we get the response as follows
+        /**
+         200 Response
+                "items": [
+                        {
+                            "id": "someId"
+                            "description": "some description"       // can also be nil so not sent at all
+                            "location": "some location"                 // Same as above
+                            "image": "some-image-url.com"
+                        }
+                ]
+         */
+        let url = URL(string: "https://some-url.com")!
+        let client = HTTPClientMock()
+        let sut = RemoteFeedLoader(client: client, url: url)
+        
+        expect(sut: sut, toCompleteWithResult: .success([item1, item2])) {
+            let jsonData = try? JSONSerialization.data(withJSONObject: itemsJSON)
+            client.complete(withStatusCode: 200, data: jsonData!)
+        }
+    }
+    
     // MARK:- Helpers
     private func expect(sut: RemoteFeedLoader,
                         toCompleteWithResult result: RemoteFeedLoader.FeedLoaderResult,

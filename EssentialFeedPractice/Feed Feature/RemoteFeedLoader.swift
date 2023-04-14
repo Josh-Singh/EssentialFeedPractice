@@ -28,9 +28,8 @@ public final class RemoteFeedLoader {
         client.get(from: url) { [weak self] result in
             switch result {
             case .success((let data, _)):
-                // Making sure this is a valid JSON and nothing else with the following if let
-                if let json = try? JSONSerialization.jsonObject(with: data) {
-                    completion(.success([]))
+                if let decodedJSON = try? JSONDecoder().decode(RootNode.self, from: data) {
+                    completion(.success(decodedJSON.items))
                 } else {
                     completion(.failure(.invalidCode))    // Commenting this out and adding `break` here simulates the 200 response with invalid json case
                 }
@@ -39,4 +38,8 @@ public final class RemoteFeedLoader {
             }
         }
     }
+}
+
+fileprivate struct RootNode: Decodable {
+    let items: [FeedItem]
 }
