@@ -60,7 +60,8 @@ class RemoteFeedLoaderTests: XCTestCase {
         let invalidCodes = [199, 201, 300, 400, 404, 500]
         invalidCodes.enumerated().forEach { index, code in
             expect(sut: sut, toCompleteWithResult: .failure(.invalidCode)) {
-                client.complete(withStatusCode: code, at: index)
+                let jsonData = makeItemsJson(items: [])
+                client.complete(withStatusCode: code, data: jsonData, at: index)
             }
         }
     }

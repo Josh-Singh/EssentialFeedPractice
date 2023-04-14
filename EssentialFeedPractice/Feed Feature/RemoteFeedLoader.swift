@@ -27,8 +27,8 @@ public final class RemoteFeedLoader {
         // Default closure to make sure tests that don't test error case don't break
         client.get(from: url) { [weak self] result in
             switch result {
-            case .success((let data, _)):
-                if let decodedJSON = try? JSONDecoder().decode(RootNode.self, from: data) {
+            case .success((let data, let response)):
+                if let decodedJSON = try? JSONDecoder().decode(RootNode.self, from: data), response.statusCode == 200 {
                     completion(.success(decodedJSON.items))
                 } else {
                     completion(.failure(.invalidCode))    // Commenting this out and adding `break` here simulates the 200 response with invalid json case
