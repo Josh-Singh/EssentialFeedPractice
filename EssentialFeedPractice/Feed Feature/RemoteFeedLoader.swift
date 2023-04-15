@@ -28,10 +28,10 @@ public final class RemoteFeedLoader {
         client.get(from: url) { [weak self] result in
             switch result {
             case .success((let data, let response)):
-                if let decodedJSON = try? JSONDecoder().decode(RootNode.self, from: data), response.statusCode == 200 {
-                    completion(.success(decodedJSON.items.map({ $0.item })))
+                if let mappedFeedItems = try? FeedItemsMapper.map(data: data, response: response) {
+                    completion(.success(mappedFeedItems))
                 } else {
-                    completion(.failure(.invalidCode))    // Commenting this out and adding `break` here simulates the 200 response with invalid json case
+                    completion(.failure(.invalidCode))
                 }
             case .failure(_):
                 completion(.failure(.connectivity))
@@ -40,17 +40,26 @@ public final class RemoteFeedLoader {
     }
 }
 
-fileprivate struct RootNode: Decodable {
-    let items: [APIFeedItem]
-}
+private class FeedItemsMapper {
+    private struct RootNode: Decodable {
+        let items: [APIFeedItem]
+    }
 
-private struct APIFeedItem: Decodable {
-    public let id: UUID
-    public let description: String?
-    public let location: String?
-    public let image: URL
+    private struct APIFeedItem: Decodable {
+        public let id: UUID
+        public let description: String?
+        public let location: String?
+        public let image: URL
+        
+        var item: FeedItem {
+            return FeedItem(id: id, description: description, location: location, imageURL: image)
+        }
+    }
     
-    var item: FeedItem {
-        return FeedItem(id: id, description: description, location: location, imageURL: image)
+    static func map(data: Data, response: HTTPURLResponse) throws -> [FeedItem] {
+        guard let rootNode_fromDecodedJSON = try? JSONDecoder().decode(RootNode.self, from: data), response.statusCode == 200 else {
+            throw RemoteFeedLoader.Error.invalidCode
+        }
+        return rootNode_fromDecodedJSON.items.map { $0.item }
     }
 }
