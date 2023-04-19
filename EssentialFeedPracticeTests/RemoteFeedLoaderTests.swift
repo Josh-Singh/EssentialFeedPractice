@@ -149,7 +149,7 @@ class RemoteFeedLoaderTests: XCTestCase {
             "description": description,
             "location": location,
             "image": imageURL.absoluteString
-        ]   // TODO: Use compactMap or something to eliminate description and location values that are nil
+        ].compactMapValues { $0 }
         
         return (feedItem, jsonRepresentationOfFeedItem)
     }
