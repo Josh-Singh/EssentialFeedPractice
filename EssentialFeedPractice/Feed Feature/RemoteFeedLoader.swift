@@ -26,6 +26,7 @@ public final class RemoteFeedLoader {
     public func load(completion: @escaping (FeedLoaderResult) -> ()) {
         // Default closure to make sure tests that don't test error case don't break
         client.get(from: url) { [weak self] result in
+            guard self != nil else { return }
             switch result {
             case .success((let data, let response)):
                 if let mappedFeedItems = try? FeedItemsMapper.map(data: data, response: response) {
