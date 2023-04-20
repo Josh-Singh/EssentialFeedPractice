@@ -27,6 +27,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         XCTAssertNotNil(client.requestedURLs)
         XCTAssertEqual(client.requestedURLs, [url])
+        checkForMemoryLeaks(sut: sut, client: client)
     }
 
     func test_loaddataFromRequestURL_Twice() {
@@ -39,6 +40,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         sut.load { _ in }
         
         XCTAssertEqual(client.requestedURLs, [url, url])
+        checkForMemoryLeaks(sut: sut, client: client)
     }
     
     func test_loadErrorConnectivity() {
@@ -49,6 +51,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         expect(sut: sut, toCompleteWithResult: .failure(.connectivity)) {
             client.complete(with: clientError)
+            checkForMemoryLeaks(sut: sut, client: client)
         }
     }
     
@@ -62,6 +65,7 @@ class RemoteFeedLoaderTests: XCTestCase {
             expect(sut: sut, toCompleteWithResult: .failure(.invalidCode)) {
                 let jsonData = makeItemsJson(items: [])
                 client.complete(withStatusCode: code, data: jsonData, at: index)
+                checkForMemoryLeaks(sut: sut, client: client)
             }
         }
     }
@@ -75,6 +79,7 @@ class RemoteFeedLoaderTests: XCTestCase {
             // Below is the action we are testing passed as closure of the expect function
             let invalidJSON = Data(bytes: "invalid json".utf8)
             client.complete(withStatusCode: 200, data: invalidJSON)
+            checkForMemoryLeaks(sut: sut, client: client)
         }
     }
     
@@ -86,6 +91,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         expect(sut: sut, toCompleteWithResult: .success([])) {
             let emptyListJSON = makeItemsJson(items: [])
             client.complete(withStatusCode: 200, data: emptyListJSON)
+            checkForMemoryLeaks(sut: sut, client: client)
         }
     }
     
@@ -119,6 +125,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         expect(sut: sut, toCompleteWithResult: .success([item1.object, item2.object])) {
             let jsonData = makeItemsJson(items: [item1JSON, item2JSON])
             client.complete(withStatusCode: 200, data: jsonData)
+            checkForMemoryLeaks(sut: sut, client: client)
         }
     }
     
@@ -157,5 +164,15 @@ class RemoteFeedLoaderTests: XCTestCase {
     private func makeItemsJson(items: [[String: Any]]) -> Data {
         let items = ["items": items]
         return try! JSONSerialization.data(withJSONObject: items)
+    }
+    
+    private func checkForMemoryLeaks(sut: RemoteFeedLoader,
+                                     client: HTTPClientMock,
+                                     file: StaticString = #file,
+                                     line: UInt = #line ) {
+        addTeardownBlock { [weak sut, weak client] in
+            XCTAssertNil(sut, "SUT instance should be deallocated", file: file, line: line)
+            XCTAssertNil(client, "Client instance should be deallocated", file: file, line: line)
+        }
     }
 }
