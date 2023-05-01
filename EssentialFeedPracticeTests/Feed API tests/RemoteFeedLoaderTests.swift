@@ -49,7 +49,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         let clientError = NSError(domain: "Test", code: 0)
         let sut = RemoteFeedLoader(client: client, url: url)
         
-        expect(sut: sut, toCompleteWithResult: .failure(RemoteFeedLoader.Error.connectivity)) {
+        expect(sut: sut, toCompleteWithResult: failure(case: .connectivity)) {
             client.complete(with: clientError)
             checkForMemoryLeaks(sut: sut, client: client)
         }
@@ -62,7 +62,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         let invalidCodes = [199, 201, 300, 400, 404, 500]
         invalidCodes.enumerated().forEach { index, code in
-            expect(sut: sut, toCompleteWithResult: .failure(RemoteFeedLoader.Error.invalidCode)) {
+            expect(sut: sut, toCompleteWithResult: failure(case: .invalidCode)) {
                 let jsonData = makeItemsJson(items: [])
                 client.complete(withStatusCode: code, data: jsonData, at: index)
                 checkForMemoryLeaks(sut: sut, client: client)
@@ -75,7 +75,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientMock()
         let sut = RemoteFeedLoader(client: client, url: url)
         
-        expect(sut: sut, toCompleteWithResult: .failure(RemoteFeedLoader.Error.invalidCode)) {
+        expect(sut: sut, toCompleteWithResult: failure(case: .invalidCode)) {
             // Below is the action we are testing passed as closure of the expect function
             let invalidJSON = Data(bytes: "invalid json".utf8)
             client.complete(withStatusCode: 200, data: invalidJSON)
@@ -197,5 +197,9 @@ class RemoteFeedLoaderTests: XCTestCase {
             XCTAssertNil(sut, "SUT instance should be deallocated", file: file, line: line)
             XCTAssertNil(client, "Client instance should be deallocated", file: file, line: line)
         }
+    }
+    
+    private func failure(case error: RemoteFeedLoader.Error) -> LoadFeedResult {
+        return .failure(error)
     }
 }
