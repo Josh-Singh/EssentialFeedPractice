@@ -49,7 +49,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         let clientError = NSError(domain: "Test", code: 0)
         let sut = RemoteFeedLoader(client: client, url: url)
         
-        expect(sut: sut, toCompleteWithResult: .failure(.connectivity)) {
+        expect(sut: sut, toCompleteWithResult: .failure(RemoteFeedLoader.Error.connectivity)) {
             client.complete(with: clientError)
             checkForMemoryLeaks(sut: sut, client: client)
         }
@@ -62,7 +62,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         let invalidCodes = [199, 201, 300, 400, 404, 500]
         invalidCodes.enumerated().forEach { index, code in
-            expect(sut: sut, toCompleteWithResult: .failure(.invalidCode)) {
+            expect(sut: sut, toCompleteWithResult: .failure(RemoteFeedLoader.Error.invalidCode)) {
                 let jsonData = makeItemsJson(items: [])
                 client.complete(withStatusCode: code, data: jsonData, at: index)
                 checkForMemoryLeaks(sut: sut, client: client)
@@ -75,7 +75,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientMock()
         let sut = RemoteFeedLoader(client: client, url: url)
         
-        expect(sut: sut, toCompleteWithResult: .failure(.invalidCode)) {
+        expect(sut: sut, toCompleteWithResult: .failure(RemoteFeedLoader.Error.invalidCode)) {
             // Below is the action we are testing passed as closure of the expect function
             let invalidJSON = Data(bytes: "invalid json".utf8)
             client.complete(withStatusCode: 200, data: invalidJSON)
@@ -133,7 +133,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         let url = URL(string: "https://someURL.com")!
         let client = HTTPClientMock()
         var sut: RemoteFeedLoader? = RemoteFeedLoader(client: client, url: url)
-        var capturedResults: [RemoteFeedLoader.FeedLoaderResult] = []
+        var capturedResults: [LoadFeedResult] = []
         
         sut?.load { capturedResults.append($0) }
         sut = nil
@@ -144,18 +144,28 @@ class RemoteFeedLoaderTests: XCTestCase {
     
     // MARK:- Helpers
     private func expect(sut: RemoteFeedLoader,
-                        toCompleteWithResult result: RemoteFeedLoader.FeedLoaderResult,
+                        toCompleteWithResult expectedResult: LoadFeedResult,
                         whenExecuting action: () -> (),
                         file: StaticString = #file,
                         line: UInt = #line ) {
         
         /// `file` and `line` are added in the function signature here to make sure that when a failing test occurs the fail message doesn't show up on the `XCTAssertEqual` of the `expect` method but rather in the test itself
         
-        var capturedResults: [RemoteFeedLoader.FeedLoaderResult] = []
-        sut.load { capturedResults.append($0) }
+        let exp = expectation(description: "Wait for load completion")
+        sut.load { receivedResult in
+            switch (receivedResult, expectedResult) {
+            case (.success(let receivedItems), .success(let expectedItems)):
+                XCTAssertEqual(receivedItems, expectedItems, file: file, line: line)
+            case (.failure(let receivedError), .failure(let expectedError)):
+                XCTAssertEqual(receivedError.localizedDescription, expectedError.localizedDescription, file: file, line: line)
+            default:
+                XCTFail("Expected result: \(expectedResult) but received result:\(receivedResult) instead", file: file, line: line)
+            }
+            exp.fulfill()
+        }
         
         action()
-        XCTAssertEqual(capturedResults, [result], file: file, line: line)
+        wait(for: [exp], timeout: 1.0)
     }
     
     private func makeItem(id: UUID,

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public final class RemoteFeedLoader {
+public final class RemoteFeedLoader: FeedLoader {
     private let client: HTTPClient
     private let url: URL
     
@@ -16,15 +16,14 @@ public final class RemoteFeedLoader {
         case invalidCode
     }
     
-    public typealias FeedLoaderResult = Result<[FeedItem], Error>
+//    public typealias FeedLoaderResult = Result<[FeedItem], Error>
     
     public init(client: HTTPClient, url: URL) {
         self.client = client
         self.url = url
     }
     
-    public func load(completion: @escaping (FeedLoaderResult) -> ()) {
-        // Default closure to make sure tests that don't test error case don't break
+    public func load(completion: @escaping (LoadFeedResult) -> ()) {
         client.get(from: url) { [weak self] result in
             guard self != nil else { return }
             switch result {
@@ -32,10 +31,10 @@ public final class RemoteFeedLoader {
                 if let mappedFeedItems = try? FeedItemsMapper.map(data: data, response: response) {
                     completion(.success(mappedFeedItems))
                 } else {
-                    completion(.failure(.invalidCode))
+                    completion(.failure(Error.invalidCode))
                 }
             case .failure(_):
-                completion(.failure(.connectivity))
+                completion(.failure(Error.connectivity))
             }
         }
     }
