@@ -9,24 +9,12 @@ import XCTest
 
 class URLSessionHTTPClientTests: XCTestCase {
     
-    func test_dataTaskFromUrl_callsResume() {
-        let url = URL(string: "http://any-url.com")!
-        let mockSession = HTTPSessionMock()
-        let task = MockURLSessionDataTask()
-        mockSession.stub(url: url, task: task)
-        let sut = URLSessionHTTPClient(session: mockSession)
-        
-        sut.get(from: url) { _ in }
-        
-        XCTAssertEqual(task.resumeCallCount, 1)
-    }
-    
     func test_getFromUrl_failsOnRequestError() {
+        URLProtocolMock.startInterceptingRequests()
         let url = URL(string: "http://any-url.com")!
-        let mockSession = HTTPSessionMock()
         let error = NSError(domain: "some error", code: 1)
-        mockSession.stub(url: url, error: error)
-        let sut = URLSessionHTTPClient(session: mockSession)
+        URLProtocolMock.stub(url: url, error: error)
+        let sut = URLSessionHTTPClient()
         
         let expectation = expectation(description: "wait for completion")
         sut.get(from: url) { result in
@@ -40,5 +28,6 @@ class URLSessionHTTPClientTests: XCTestCase {
         }
         
         wait(for: [expectation], timeout: 1.0)
+        URLProtocolMock.stopInterceptingRequests()
     }
 }

@@ -8,9 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9610FD1F2A046B0B00076C84 /* URLSessionHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9610FD1E2A046B0B00076C84 /* URLSessionHTTPClientTests.swift */; };
-		9610FD212A0AD80100076C84 /* MockURLSessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9610FD202A0AD80100076C84 /* MockURLSessionDataTask.swift */; };
-		9610FD232A0AD83800076C84 /* FakeURLSessionDataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9610FD222A0AD83800076C84 /* FakeURLSessionDataTask.swift */; };
-		9610FD252A0ADB3C00076C84 /* HTTPSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9610FD242A0ADB3C00076C84 /* HTTPSessionMock.swift */; };
+		9610FD252A0ADB3C00076C84 /* URLProtocolMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9610FD242A0ADB3C00076C84 /* URLProtocolMock.swift */; };
 		9638E8BF29EFA76700C598CC /* FeedItemsMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9638E8BE29EFA76700C598CC /* FeedItemsMapper.swift */; };
 		9638E8C029EFA76700C598CC /* FeedItemsMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9638E8BE29EFA76700C598CC /* FeedItemsMapper.swift */; };
 		9647C9C429DF42A000637D19 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9647C9C329DF42A000637D19 /* AppDelegate.swift */; };
@@ -52,9 +50,7 @@
 
 /* Begin PBXFileReference section */
 		9610FD1E2A046B0B00076C84 /* URLSessionHTTPClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLSessionHTTPClientTests.swift; sourceTree = "<group>"; };
-		9610FD202A0AD80100076C84 /* MockURLSessionDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLSessionDataTask.swift; sourceTree = "<group>"; };
-		9610FD222A0AD83800076C84 /* FakeURLSessionDataTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FakeURLSessionDataTask.swift; sourceTree = "<group>"; };
-		9610FD242A0ADB3C00076C84 /* HTTPSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPSessionMock.swift; sourceTree = "<group>"; };
+		9610FD242A0ADB3C00076C84 /* URLProtocolMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLProtocolMock.swift; sourceTree = "<group>"; };
 		9638E8BE29EFA76700C598CC /* FeedItemsMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedItemsMapper.swift; sourceTree = "<group>"; };
 		9647C9C029DF42A000637D19 /* EssentialFeedPractice.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EssentialFeedPractice.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9647C9C329DF42A000637D19 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -183,9 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				96E4139D29DF5625008A499C /* HTTPClientMock.swift */,
-				9610FD202A0AD80100076C84 /* MockURLSessionDataTask.swift */,
-				9610FD222A0AD83800076C84 /* FakeURLSessionDataTask.swift */,
-				9610FD242A0ADB3C00076C84 /* HTTPSessionMock.swift */,
+				9610FD242A0ADB3C00076C84 /* URLProtocolMock.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -335,16 +329,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9610FD252A0ADB3C00076C84 /* HTTPSessionMock.swift in Sources */,
+				9610FD252A0ADB3C00076C84 /* URLProtocolMock.swift in Sources */,
 				9647C9FB29DF456000637D19 /* RemoteFeedLoaderTests.swift in Sources */,
-				9610FD212A0AD80100076C84 /* MockURLSessionDataTask.swift in Sources */,
 				9610FD1F2A046B0B00076C84 /* URLSessionHTTPClientTests.swift in Sources */,
 				9647C9F929DF447E00637D19 /* FeedLoader.swift in Sources */,
 				96E4139B29DF5193008A499C /* HTTPClient.swift in Sources */,
 				9638E8C029EFA76700C598CC /* FeedItemsMapper.swift in Sources */,
 				9647C9F629DF445B00637D19 /* FeedItem.swift in Sources */,
 				9647C9FE29DF45B500637D19 /* RemoteFeedLoader.swift in Sources */,
-				9610FD232A0AD83800076C84 /* FakeURLSessionDataTask.swift in Sources */,
 				96E4139E29DF5625008A499C /* HTTPClientMock.swift in Sources */,
 				9647C9DB29DF42A900637D19 /* EssentialFeedPracticeTests.swift in Sources */,
 			);
