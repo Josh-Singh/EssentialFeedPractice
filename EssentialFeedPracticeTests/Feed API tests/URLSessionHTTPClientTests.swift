@@ -11,7 +11,7 @@ class URLSessionHTTPClientTests: XCTestCase {
     
     func test_dataTaskFromUrl_callsResume() {
         let url = URL(string: "http://any-url.com")!
-        let mockSession = URLSessionMock()
+        let mockSession = HTTPSessionMock()
         let task = MockURLSessionDataTask()
         mockSession.stub(url: url, task: task)
         let sut = URLSessionHTTPClient(session: mockSession)
@@ -23,7 +23,7 @@ class URLSessionHTTPClientTests: XCTestCase {
     
     func test_getFromUrl_failsOnRequestError() {
         let url = URL(string: "http://any-url.com")!
-        let mockSession = URLSessionMock()
+        let mockSession = HTTPSessionMock()
         let error = NSError(domain: "some error", code: 1)
         mockSession.stub(url: url, error: error)
         let sut = URLSessionHTTPClient(session: mockSession)
@@ -42,5 +42,3 @@ class URLSessionHTTPClientTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
 }
-
-

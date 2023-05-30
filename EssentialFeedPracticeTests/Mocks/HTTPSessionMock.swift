@@ -7,15 +7,15 @@
 
 import Foundation
 
-class URLSessionMock: URLSession {
+class HTTPSessionMock: HTTPSession {
     private var stubs: [URL : Stub] = [:]
     
     private struct Stub {
-        let task: URLSessionDataTask
+        let task: HTTPSessionDataTask
         let error: Error?
     }
     
-    override func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask {
+    func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> HTTPSessionDataTask {
         guard let stub = stubs[url] else  {
             fatalError("Couldn't find stub for given URL: \(url)")
         }
@@ -24,7 +24,7 @@ class URLSessionMock: URLSession {
     }
     
     // Stub function helper for recording dataTasks for a given URL
-    func stub(url: URL, task: URLSessionDataTask = FakeURLSessionDataTask(), error: Error? = nil) {
+    func stub(url: URL, task: HTTPSessionDataTask = FakeURLSessionDataTask(), error: Error? = nil) {
         stubs[url] = Stub(task: task, error: error)
     }
 }

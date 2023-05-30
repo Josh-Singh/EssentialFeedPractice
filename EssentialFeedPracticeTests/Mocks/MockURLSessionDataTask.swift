@@ -7,10 +7,10 @@
 
 import Foundation
 
-class MockURLSessionDataTask: URLSessionDataTask {
+class MockURLSessionDataTask: HTTPSessionDataTask {
     var resumeCallCount: Int = 0
     
-    override func resume() {
+    func resume() {
         resumeCallCount += 1
     }
 }
